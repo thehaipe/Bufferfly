@@ -14,4 +14,4 @@ If you find a bug or have an idea to make the Bufferfly even better — open an 
 
 PS: Made with ❤️ to the Lviv Polytechnic SE community, thank you for getting me interested in programming :)
 
-[![Download](https://img.shields.io/badge/Download-Bufferly-blue?style=for-the-badge&logo=apple)](](https://github.com/thehaipe/Bufferly/releases/tag/v.0.1(Aplha)))
+[![Download](https://img.shields.io/badge/Download-Bufferly-brightgreen?style=for-the-badge&logo=apple)](https://github.com/thehaipe/Bufferly/releases/tag/v0.1-alpha)
