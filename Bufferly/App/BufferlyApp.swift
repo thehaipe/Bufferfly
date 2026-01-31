@@ -65,7 +65,7 @@ struct BufferlyApp: App {
             .keyboardShortcut(",", modifiers: .command)
             
             Button("Support Author") {
-                if let url = URL(string: "https://github.com/sponsors/valentyn") {
+                if let url = URL(string: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd") {
                     NSWorkspace.shared.open(url)
                 }
             }
