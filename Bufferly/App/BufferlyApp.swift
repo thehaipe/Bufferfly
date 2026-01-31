@@ -61,14 +61,14 @@ struct BufferlyApp: App {
         }
         .modelContainer(Self.columnModelContainer)
         
-        MenuBarExtra("Bufferly", systemImage: "paperclip") {
+        MenuBarExtra {
             SettingsLink {
                 Text("Settings")
             }
             .keyboardShortcut(",", modifiers: .command)
             
             Button("Support Author") {
-                if let url = URL(string: "https://github.com/thehaipe") {
+                if let url = URL(string: "https://github.com/sponsors/valentyn") {
                     NSWorkspace.shared.open(url)
                 }
             }
@@ -79,6 +79,18 @@ struct BufferlyApp: App {
                 NSApplication.shared.terminate(nil)
             }
             .keyboardShortcut("q", modifiers: .command)
+        } label: {
+            let image = NSImage(resource: .appLogo)
+            let size = NSSize(width: 22, height: 22)
+            let resized = NSImage(size: size)
+            
+            let _ = {
+                resized.lockFocus()
+                image.draw(in: NSRect(origin: .zero, size: size))
+                resized.unlockFocus()
+            }()
+            
+            Image(nsImage: resized)
         }
     }
 }
