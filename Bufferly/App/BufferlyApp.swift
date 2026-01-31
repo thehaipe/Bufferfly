@@ -59,23 +59,7 @@ struct BufferlyApp: App {
         .modelContainer(Self.columnModelContainer)
         
         MenuBarExtra {
-            SettingsLink {
-                Text("Settings")
-            }
-            .keyboardShortcut(",", modifiers: .command)
-            
-            Button("Support Author") {
-                if let url = URL(string: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd") {
-                    NSWorkspace.shared.open(url)
-                }
-            }
-            
-            Divider()
-            
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
-            }
-            .keyboardShortcut("q", modifiers: .command)
+            MenuBarView()
         } label: {
             let image = NSImage(resource: .appLogo)
             let size = NSSize(width: 22, height: 22)
@@ -89,5 +73,30 @@ struct BufferlyApp: App {
             
             Image(nsImage: resized)
         }
+    }
+}
+
+struct MenuBarView: View {
+    @Environment(\.openSettings) private var openSettings
+    
+    var body: some View {
+        Button("Settings") {
+            NSApp.activate(ignoringOtherApps: true)
+            openSettings()
+        }
+        .keyboardShortcut(",", modifiers: .command)
+        
+        Button("Support Author") {
+            if let url = URL(string: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+        
+        Divider()
+        
+        Button("Quit") {
+            NSApplication.shared.terminate(nil)
+        }
+        .keyboardShortcut("q", modifiers: .command)
     }
 }

@@ -13,13 +13,21 @@ struct GeneralSettingsView: View {
             }
             
             Section {
-                Picker("History Limit", selection: $historyLimit) {
-                    Text("10 items").tag(10)
-                    Text("20 items").tag(20)
-                    Text("50 items").tag(50)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("History Limit")
+                        Spacer()
+                        Text("\(historyLimit) items")
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Slider(value: Binding(
+                        get: { Double(historyLimit) },
+                        set: { historyLimit = Int($0) }
+                    ), in: 10...50, step: 5)
                 }
                 
-                if historyLimit == 50 {
+                if historyLimit >= 45  {
                     Text("⚠️ Higher limits may impact performance.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
