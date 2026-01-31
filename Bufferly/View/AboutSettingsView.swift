@@ -16,7 +16,7 @@ struct AboutSettingsView: View {
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Bufferly").font(.headline)
-                        Text("Version 1.0.0 (Alpha)").font(.subheadline).foregroundStyle(.secondary)
+                        Text("Version 0.1 (Alpha)").font(.subheadline).foregroundStyle(.secondary)
                     }
                 }
                 .padding(.vertical, 5)
@@ -26,7 +26,7 @@ struct AboutSettingsView: View {
                 Link(destination: URL(string: "https://github.com/thehaipe/Bufferly")!) {
                     Label("GitHub Repository", systemImage: "chevron.left.forwardslash.chevron.right")
                 }
-                Link(destination: URL(string: "https://github.com/sponsors/thehaipe")!) {
+                Link(destination: URL(string: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd")!) {
                     Label("Support Development", systemImage: "heart.fill")
                 }
             }
