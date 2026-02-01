@@ -5,7 +5,7 @@
   A lightweight, open-source tool that brings a fresh spin to your macOS clipboard history.</p>
 
   [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
-  [![Platform: macOS 14+](https://img.shields.io/badge/Platform-macOS%2015+-ff2c2c?style=for-the-badge&logo=apple)](https://github.com/thehaipe/Bufferly)
+  [![Platform: macOS 14+](https://img.shields.io/badge/Platform-macOS%2014+-ff2c2c?style=for-the-badge&logo=apple)](https://github.com/thehaipe/Bufferly)
   [![Download](https://img.shields.io/badge/Download-Bufferly-brightgreen?style=for-the-badge&logo=apple)](https://github.com/thehaipe/Bufferly/releases/latest)
 
 </div>
