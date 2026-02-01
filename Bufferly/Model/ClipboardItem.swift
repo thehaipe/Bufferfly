@@ -7,6 +7,7 @@ final class ClipboardItem {
     var createdAt: Date
     var type: String
     var textContent: String?
+    var note: String?
     @Attribute(.externalStorage) var binaryData: Data?
     var isPinned: Bool = false
     
@@ -15,6 +16,7 @@ final class ClipboardItem {
         createdAt: Date = Date(),
         type: String,
         textContent: String? = nil,
+        note: String? = nil,
         binaryData: Data? = nil,
         isPinned: Bool = false
     ) {
@@ -22,6 +24,7 @@ final class ClipboardItem {
         self.createdAt = createdAt
         self.type = type
         self.textContent = textContent
+        self.note = note
         self.binaryData = binaryData
         self.isPinned = isPinned
     }
