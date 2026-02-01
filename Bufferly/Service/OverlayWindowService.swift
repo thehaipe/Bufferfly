@@ -1,7 +1,9 @@
 import SwiftUI
 import AppKit
 import SwiftData
-
+//MARK:Important note.
+/*  I noticed that after my Mac came out of sleep mode, reusing Bufferfly became somewhat problematic. Since View was created once and simply reused, there were no problems with this until NSPanel started to become “stale.” The decision was made to rebuild the view each time. The cost of this approach is not very expensive in terms of Bufferfly, but it eliminates other extremes from the stale state.
+ */
 @MainActor
 final class OverlayWindowService {
     static let shared = OverlayWindowService()
@@ -17,40 +19,34 @@ final class OverlayWindowService {
     }
     
     func toggleWindow() {
-        if panel == nil {
-            createPanel()
-        }
-        
-        guard let panel = panel else { return }
-        
-        if panel.isVisible {
+        if let panel = panel, panel.isVisible {
             closeWindow()
         } else {
             showWindow()
         }
     }
-    
+
     func showWindow() {
-        guard let panel = panel else {
-            createPanel()
-            if panel != nil { showWindow() }
-            return
-        }
+        // Recreate panel each time for clean state
+        panel?.orderOut(nil)
+        panel = nil
+        createPanel()
+
+        guard let panel = panel else { return }
 
         let mouseLocation = NSEvent.mouseLocation
         let windowSize = panel.frame.size
         let screenFrame = NSScreen.main?.frame ?? .zero
-        
+
         var x = mouseLocation.x - (windowSize.width / 2)
-        var y = mouseLocation.y - (windowSize.height / 2) 
-        
+        var y = mouseLocation.y - (windowSize.height / 2)
+
         if x < screenFrame.minX { x = screenFrame.minX + 10 }
         if x + windowSize.width > screenFrame.maxX { x = screenFrame.maxX - windowSize.width - 10 }
         if y - windowSize.height < screenFrame.minY { y = screenFrame.minY + windowSize.height + 10 }
-        
+
         panel.setFrameOrigin(NSPoint(x: x, y: y))
-        
-        // Activate app to allow text input
+
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
 
