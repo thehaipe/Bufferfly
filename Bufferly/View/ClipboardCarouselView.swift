@@ -23,14 +23,13 @@ struct ClipboardCarouselView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: spacing) {
                         ForEach(items) { item in
-                            Button {
-                                PasteService.shared.paste(item: item)
-                            } label: {
-                                ClipboardItemRow(item: item)
-                            }
-                            .buttonStyle(.plain)
-                            .frame(height: itemHeight)
-                            .scrollTransition { content, phase in
+                            ClipboardItemRow(item: item)
+                                .contentShape(Rectangle()) 
+                                .onTapGesture {
+                                    PasteService.shared.paste(item: item)
+                                }
+                                .frame(height: itemHeight)
+                                .scrollTransition { content, phase in
                                     content
                                         .opacity(phase.isIdentity ? 1.0 : 0.6)
                                         .scaleEffect(phase.isIdentity ? 1.0 : 0.85)
@@ -49,7 +48,9 @@ struct ClipboardCarouselView: View {
 }
 
 struct ClipboardItemRow: View {
-    let item: ClipboardItem
+    @Bindable var item: ClipboardItem
+    @FocusState private var isEditing: Bool
+    @FocusState private var isRowFocused: Bool
     
     var body: some View {
         HStack(spacing: 12) {
@@ -73,15 +74,36 @@ struct ClipboardItemRow: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
             }
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(item.textContent?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "Image")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
-                Text(item.createdAt.formatted(date: .omitted, time: .shortened))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 6) {
+                    TextField("Note", text: Binding(
+                        get: { item.note ?? "" },
+                        set: { item.note = $0.isEmpty ? nil : $0 }
+                    ))
+                    .focused($isEditing)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 10, weight: .medium))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background {
+                        Capsule()
+                            .fill(Color.black.opacity(0.1))
+                            .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                    }
+                    .frame(width: 80) // Fixed width for the tag to keep layout stable
+                    .onTapGesture {
+                        isEditing = true
+                    }
+                    
+                    Text(item.createdAt.formatted(date: .omitted, time: .shortened))
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
             
             Spacer()
@@ -99,6 +121,18 @@ struct ClipboardItemRow: View {
                 .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
         }
         .padding(.horizontal, 10)
+        .focusable()
+        .focused($isRowFocused)
+        .focusEffectDisabled()
+        .onKeyPress(.return) {
+            if isEditing {
+                isEditing = false
+                isRowFocused = true
+                return .handled
+            }
+            PasteService.shared.paste(item: item)
+            return .handled
+        }
     }
 }
 

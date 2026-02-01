@@ -8,7 +8,7 @@ final class OverlayWindowService {
     
     private var panel: NSPanel?
     private var container: ModelContainer?
-    private var globalClickMonitor: Any?
+    private var resignActiveObserver: NSObjectProtocol?
     
     private init() {}
     
@@ -49,31 +49,36 @@ final class OverlayWindowService {
         if y - windowSize.height < screenFrame.minY { y = screenFrame.minY + windowSize.height + 10 }
         
         panel.setFrameOrigin(NSPoint(x: x, y: y))
+        
+        // Activate app to allow text input
+        NSApp.activate(ignoringOtherApps: true)
+        panel.makeKeyAndOrderFront(nil)
 
-        panel.orderFrontRegardless()
-
-        startMonitoringClicks()
+        startMonitoringFocus()
     }
     
     func closeWindow() {
         panel?.orderOut(nil)
-        stopMonitoringClicks()
+        stopMonitoringFocus()
+        //Hide app to ensure focus returns to previous app immediately
+        NSApp.hide(nil)
     }
     
-    private func startMonitoringClicks() {
-        stopMonitoringClicks()
-
-        globalClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            Task { @MainActor in
-                self?.closeWindow()
-            }
+    private func startMonitoringFocus() {
+        stopMonitoringFocus()
+        resignActiveObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.closeWindow()
         }
     }
     
-    private func stopMonitoringClicks() {
-        if let monitor = globalClickMonitor {
-            NSEvent.removeMonitor(monitor)
-            globalClickMonitor = nil
+    private func stopMonitoringFocus() {
+        if let observer = resignActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+            resignActiveObserver = nil
         }
     }
     
@@ -92,13 +97,13 @@ final class OverlayWindowService {
                 .modelContainer(container) //Important! Share context
         )
         
-        let panel = NSPanel(
+        // Remove .nonactivatingPanel to allow taking focus
+        let panel = FloatingPanel(
             contentRect: NSRect(x: 0, y: 0, width: 338, height: 158),
-            styleMask: [.borderless, .nonactivatingPanel],
+            styleMask: [.borderless],
             backing: .buffered,
             defer: false
         )
-        
 
         panel.backgroundColor = .clear
         panel.isOpaque = false
@@ -106,8 +111,13 @@ final class OverlayWindowService {
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.contentViewController = hostingController
-        panel.hidesOnDeactivate = false 
+        panel.hidesOnDeactivate = true
         
         self.panel = panel
     }
+}
+
+class FloatingPanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
 }
