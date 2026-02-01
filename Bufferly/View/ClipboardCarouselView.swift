@@ -3,6 +3,8 @@ import SwiftData
 
 struct ClipboardCarouselView: View {
     @Query(sort: \ClipboardItem.createdAt, order: .reverse) private var items: [ClipboardItem]
+    @State private var selectedIndex: Int = 0
+    @FocusState private var focusedIndex: Int?
 
     private let windowWidth: CGFloat = 338
     private let windowHeight: CGFloat = 158
@@ -21,9 +23,22 @@ struct ClipboardCarouselView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: spacing) {
-                        ForEach(items) { item in
-                            ClipboardItemRow(item: item)
+                    ScrollViewReader { proxy in
+                        VStack(spacing: spacing) {
+                            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                                ClipboardItemRow(
+                                    item: item,
+                                    isSelected: index == selectedIndex,
+                                    onSelect: {
+                                        selectedIndex = index
+                                        focusedIndex = index
+                                    },
+                                    requestFocus: {
+                                        focusedIndex = index
+                                    }
+                                )
+                                .focused($focusedIndex, equals: index)
+                                .id(index)
                                 .contentShape(Rectangle()) 
                                 .onTapGesture {
                                     PasteService.shared.paste(item: item)
@@ -35,22 +50,57 @@ struct ClipboardCarouselView: View {
                                         .scaleEffect(phase.isIdentity ? 1.0 : 0.85)
                                         .blur(radius: phase.isIdentity ? 0 : 2)
                                 }
+                            }
+                        }
+                        .padding(.vertical, 10)
+                        .defaultFocus($focusedIndex, 0) // Встановлює фокус на перший елемент при появі
+                        .onChange(of: selectedIndex) { _, newIndex in
+                            withAnimation {
+                                proxy.scrollTo(newIndex, anchor: .center)
+                            }
                         }
                     }
-                    .padding(.vertical, 10)
                 }
                 .scrollClipDisabled()
             }
         }
         .frame(width: windowWidth, height: windowHeight)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .onChange(of: items) { _, _ in
+            selectedIndex = 0
+            focusedIndex = 0
+        }
+        .onAppear {
+            if !items.isEmpty {
+                focusedIndex = 0
+            }
+        }
+        .onKeyPress(.downArrow) {
+            if selectedIndex < items.count - 1 {
+                selectedIndex += 1
+                focusedIndex = selectedIndex
+                return .handled
+            }
+            return .handled
+        }
+        .onKeyPress(.upArrow) {
+            if selectedIndex > 0 {
+                selectedIndex -= 1
+                focusedIndex = selectedIndex
+                return .handled
+            }
+            return .handled
+        }
     }
 }
 
 struct ClipboardItemRow: View {
     @Bindable var item: ClipboardItem
+    var isSelected: Bool
+    var onSelect: () -> Void
+    var requestFocus: () -> Void
+    
     @FocusState private var isEditing: Bool
-    @FocusState private var isRowFocused: Bool
     
     var body: some View {
         HStack(spacing: 12) {
@@ -95,8 +145,9 @@ struct ClipboardItemRow: View {
                             .fill(Color.black.opacity(0.1))
                             .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
                     }
-                    .frame(width: 80) // Fixed width for the tag to keep layout stable
+                    .frame(width: 80)
                     .onTapGesture {
+                        onSelect()
                         isEditing = true
                     }
                     
@@ -110,24 +161,23 @@ struct ClipboardItemRow: View {
 
             Image(systemName: "return")
                 .font(.caption)
-                .foregroundStyle(.tertiary)
-                .opacity(0.5)
+                .foregroundStyle(isSelected ? .primary : .tertiary)
+                .opacity(isSelected ? 1.0 : 0.5)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background {
             RoundedRectangle(cornerRadius: 10)
                 .fill(.regularMaterial) 
-                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                .stroke(isSelected ? Color.accentColor : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 0.5)
         }
         .padding(.horizontal, 10)
         .focusable()
-        .focused($isRowFocused)
         .focusEffectDisabled()
         .onKeyPress(.return) {
             if isEditing {
                 isEditing = false
-                isRowFocused = true
+                requestFocus()
                 return .handled
             }
             PasteService.shared.paste(item: item)
