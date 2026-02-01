@@ -95,7 +95,7 @@ final class OverlayWindowService {
         
         // Remove .nonactivatingPanel to allow taking focus
         let panel = FloatingPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 338, height: 158),
+            contentRect: NSRect(x: 0, y: 0, width: 338, height: 188),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
