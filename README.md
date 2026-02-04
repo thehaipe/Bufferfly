@@ -62,14 +62,6 @@ Bufferfly lives exclusively in menu bar. No Dock clutter, no distractions. Just 
 
 ---
 
-## ☕ Support the Project
-
-Bufferfly is free and open-source. If it saves you time and makes your workflow smoother, consider supporting its development:
-
-[![Support via Lemon Squeezy](https://img.shields.io/badge/Support-Lemon%20Squeezy-FFCB2F?style=for-the-badge&logo=lemonsqueezy&logoColor=black)](https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd)
-
----
-
 ## 📜 License
 
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
