@@ -86,7 +86,7 @@ struct MenuBarView: View {
         .keyboardShortcut(",", modifiers: .command)
         
         Button("Support Author") {
-            if let url = URL(string: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd") {
+            if let url = URL(string: "https://send.monobank.ua/jar/2qJmcYCUkW") {
                 NSWorkspace.shared.open(url)
             }
         }
