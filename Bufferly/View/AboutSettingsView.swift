@@ -35,7 +35,7 @@ struct AboutSettingsView: View {
             Section("Links") {
                 AboutLink(title: "GitHub Repository", iconName: "chevron.left.forwardslash.chevron.right", url: "https://github.com/thehaipe/Bufferfly")
                 
-                AboutLink(title: "Support Development", iconName: "heart.fill", url: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd")
+                AboutLink(title: "Support Development", iconName: "heart.fill", url: "https://send.monobank.ua/jar/2qJmcYCUkW")
                 
                 AboutLink(title: "Report a Bug or Request a Feature", iconName: "exclamationmark.bubble.fill", url: "https://github.com/thehaipe/Bufferfly/issues")
                 

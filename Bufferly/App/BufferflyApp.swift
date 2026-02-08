@@ -4,32 +4,31 @@ import Carbon
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var clipboardService: ClipboardService?
-    
+    private var overlayService: OverlayWindowService?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Hide from Dock and App Switcher
         NSApp.setActivationPolicy(.accessory)
-        
+
         let container = BufferflyApp.columnModelContainer
-        
+
         // Setup Clipboard Service
-        let service = ClipboardService(container: container)
-        service.startMonitoring()
-        self.clipboardService = service
-        
-        // Setup Overlay Service
-        OverlayWindowService.shared.setup(with: container)
-        
+        let clipboard = ClipboardService(container: container)
+        clipboard.startMonitoring()
+        self.clipboardService = clipboard
+
+        // Resolve circular dependency: PasteService needs closeWindow, OverlayWindowService needs PasteService
+        var overlayRef: OverlayWindowService?
+        let pasteService = PasteService(closeWindow: { overlayRef?.closeWindow() })
+        let overlay = OverlayWindowService(container: container, pasteService: pasteService)
+        overlayRef = overlay
+        self.overlayService = overlay
+
         // Setup Hotkeys
-        setupHotkeys()
-    }
-    
-    private func setupHotkeys() {
-        // Init service and register saved/default hotkey
         HotKeyService.shared.register()
-        
-        HotKeyService.shared.onHotKeyTriggered = {
+        HotKeyService.shared.onHotKeyTriggered = { [weak self] in
             Task { @MainActor in
-                OverlayWindowService.shared.toggleWindow()
+                self?.overlayService?.toggleWindow()
             }
         }
     }
@@ -87,7 +86,7 @@ struct MenuBarView: View {
         .keyboardShortcut(",", modifiers: .command)
         
         Button("Support Author") {
-            if let url = URL(string: "https://bufferfly.lemonsqueezy.com/checkout/buy/f2c0bafc-c7c7-4490-9e0b-80585135dadd") {
+            if let url = URL(string: "https://send.monobank.ua/jar/2qJmcYCUkW") {
                 NSWorkspace.shared.open(url)
             }
         }
