@@ -32,7 +32,6 @@ struct ClipboardCarouselView: View {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(.ultraThinMaterial)
                         .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
 
                     if items.isEmpty {
                         Text("Empty")
@@ -75,8 +74,7 @@ struct ClipboardCarouselView: View {
                                 }
                             }
                         }
-                        .scrollClipDisabled()
-                    }
+                        }
                 }
                 .frame(height: listHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -98,13 +96,12 @@ struct ClipboardCarouselView: View {
                         }
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(.ultraThinMaterial)
-                        .overlay(
+                        .background(
                             RoundedRectangle(cornerRadius: 16)
+                                .fill(.ultraThinMaterial)
                                 .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
                     }
                     .buttonStyle(.plain)
                     .frame(height: buttonHeight)
