@@ -5,6 +5,7 @@ import ApplicationServices
 @MainActor
 final class GeneralSettingsViewModel {
     var isAccessibilityTrusted: Bool
+    let updateService = UpdateService.shared
 
     init() {
         self.isAccessibilityTrusted = AXIsProcessTrusted()
