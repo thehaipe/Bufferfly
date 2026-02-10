@@ -31,6 +31,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.overlayService?.toggleWindow()
             }
         }
+
+        Task { await UpdateService.shared.backgroundAutoCheck() }
     }
 }
 
